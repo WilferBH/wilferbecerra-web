@@ -44,7 +44,7 @@ export function Hero({ t }: { t: Dictionary["hero"] }) {
             <TiltPortrait>
             <div id="hero-portrait" className="portrait relative aspect-[3/4] overflow-hidden rounded-[2rem] border border-line bg-surface">
               <Image
-                src="/wilfer-becerra.png"
+                src="/wilfer-becerra.webp"
                 alt="Wilfer Becerra"
                 fill
                 preload

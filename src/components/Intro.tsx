@@ -86,7 +86,7 @@ export function Intro() {
         <div className="relative aspect-[3/4] w-36 sm:w-44">
         <div ref={photo} className="loader-photo absolute inset-0 overflow-hidden rounded-[20px] border border-line bg-surface">
           <Image
-            src="/wilfer-becerra.png"
+            src="/wilfer-becerra.webp"
             alt=""
             fill
             preload
