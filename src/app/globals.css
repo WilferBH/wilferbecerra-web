@@ -1,0 +1,449 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+  --color-accent: var(--accent);
+  --color-accent-bright: var(--accent-bright);
+  --color-accent-muted: var(--accent-muted);
+  --color-amber: var(--amber);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Oscuro (por defecto): grafito suave en lugar de negro puro */
+:root {
+  --bg: #15171b;
+  --bg-2: #1a1d22;
+  --surface: #1f2329;
+  --surface-2: #272c33;
+  --line: rgb(255 255 255 / 0.1);
+  --line-soft: rgb(255 255 255 / 0.055);
+  --fg: #eceff3;
+  --fg-2: #a3adba;
+  --fg-3: #858e9b;
+  --accent: #0e7c6b;
+  --accent-bright: #1fbf9f;
+  --accent-muted: rgb(14 124 107 / 0.18);
+  --amber: #d99a35;
+  --glow: rgb(31 191 159 / 0.07);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f5f4ef;
+  --bg-2: #eeede7;
+  --surface: #fbfaf7;
+  --surface-2: #e8e7e0;
+  --line: rgb(20 23 28 / 0.12);
+  --line-soft: rgb(20 23 28 / 0.07);
+  --fg: #16191e;
+  --fg-2: #4d5562;
+  --fg-3: #636b77;
+  --accent: #0e7c6b;
+  --accent-bright: #0a7a66;
+  --accent-muted: rgb(14 124 107 / 0.12);
+  --amber: #a86a12;
+  --glow: rgb(14 124 107 / 0.08);
+  color-scheme: light;
+}
+
+html {
+  scroll-padding-top: 6rem;
+}
+
+body {
+  background:
+    radial-gradient(1200px 700px at 85% -10%, var(--glow), transparent 60%),
+    var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color 300ms,
+    color 300ms;
+}
+
+/* Cambio de tema: círculo que se expande desde el botón */
+html.theme-vt::view-transition-old(root),
+html.theme-vt::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html.theme-vt::view-transition-new(root) {
+  animation: theme-reveal 650ms var(--ease-in-out-soft) both;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--tx, 100%) var(--ty, 0%));
+  }
+  to {
+    clip-path: circle(var(--tr, 150vmax) at var(--tx, 100%) var(--ty, 0%));
+  }
+}
+
+::selection {
+  background: var(--color-accent-bright);
+  color: var(--color-bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-bright);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Titulares: la cursiva serif marca el énfasis */
+.display em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--color-accent-bright);
+  padding-right: 0.04em;
+}
+
+/* Textura de grano muy sutil para quitar el aspecto "plano" */
+[data-theme="light"] .grain {
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+}
+.grain {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.55'/></svg>");
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+}
+
+.pointer-glow {
+  background: radial-gradient(
+    700px circle at var(--gx, 70%) var(--gy, 20%),
+    var(--glow),
+    transparent 60%
+  );
+}
+
+/* Tarjetas con borde iluminado donde está el puntero */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 0%),
+    rgb(25 184 155 / 0.55),
+    transparent 45%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out-soft);
+  pointer-events: none;
+  z-index: 1;
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* Entrada del hero (CSS: visible aunque falle JS) */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+.rise {
+  animation: rise 800ms var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 90ms + 120ms + var(--intro, 0ms));
+}
+
+/* Palabras que suben desde una máscara */
+.word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+/* La cursiva sobresale por la derecha: margen extra para que la máscara no la corte */
+.display .word-em {
+  padding-right: 0.12em;
+  margin-right: -0.12em;
+  padding-left: 0.04em;
+  margin-left: -0.04em;
+}
+.word > span {
+  display: inline-block;
+  transform: translateY(105%);
+  transition: transform 900ms var(--ease-out-soft);
+  transition-delay: calc(var(--w, 0) * 45ms);
+}
+.is-visible .word > span,
+.words-in .word > span {
+  transform: none;
+}
+html:not(.js) .word > span {
+  transform: none;
+}
+@keyframes word-in {
+  to {
+    transform: none;
+  }
+}
+.words-now .word > span {
+  animation: word-in 1000ms var(--ease-out-soft) both;
+  animation-delay: calc(var(--w, 0) * 55ms + 150ms + var(--intro, 0ms));
+}
+
+/* Aparición al hacer scroll */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 700ms var(--ease-out-soft),
+    transform 700ms var(--ease-out-soft);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Líneas que se dibujan */
+.js [data-draw] {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1200ms var(--ease-in-out-soft);
+}
+.js [data-draw].is-visible {
+  transform: none;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+.flow-line {
+  stroke-dasharray: 4 8;
+  animation: dash 1.6s linear infinite;
+}
+
+/* Pantalla de carga: solo la primera visita de la sesión; funciona sin JS */
+html.intro {
+  --intro: 1350ms;
+}
+html.no-intro .loader {
+  display: none;
+}
+/* Mientras la foto de la carga vuela, el retrato de la portada espera oculto */
+html.intro:not(.intro-done) #hero-portrait {
+  opacity: 0;
+}
+html.intro #hero-portrait,
+html.intro #hero-portrait .portrait-img {
+  animation: none;
+}
+/* Respaldo sin JS: la carga desaparece sola */
+.loader {
+  animation: loader-failsafe 400ms ease 3500ms forwards;
+}
+@keyframes loader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+.loader-photo {
+  animation: loader-photo 900ms var(--ease-out-soft) 50ms both;
+}
+@keyframes loader-photo {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+    filter: blur(8px);
+  }
+}
+.loader-name {
+  animation: loader-name 800ms var(--ease-out-soft) 250ms both;
+}
+@keyframes loader-name {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+.loader-bar {
+  transform-origin: left;
+  animation: loader-bar 900ms var(--ease-in-out-soft) 200ms both;
+}
+@keyframes loader-bar {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Retrato: se revela de abajo arriba mientras la foto se asienta */
+.portrait {
+  animation: portrait-in 1300ms var(--ease-in-out-soft) calc(250ms + var(--intro, 0ms)) both;
+}
+.portrait-img {
+  animation: portrait-zoom 1800ms var(--ease-out-soft) calc(250ms + var(--intro, 0ms)) both;
+}
+@keyframes portrait-in {
+  from {
+    clip-path: inset(100% 0 0 0 round 2rem);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 2rem);
+  }
+}
+@keyframes portrait-zoom {
+  from {
+    transform: scale(1.18);
+  }
+}
+
+@property --brand-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.brand-ring {
+  animation: brand-spin 8s linear infinite;
+}
+.group:hover .brand-ring {
+  animation-duration: 2.5s;
+}
+@keyframes brand-spin {
+  to {
+    --brand-angle: 360deg;
+  }
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+.scroll-cue {
+  animation: scroll-cue 2.2s var(--ease-in-out-soft) infinite;
+}
+
+/* Transiciones entre páginas (View Transitions) */
+::view-transition-group(.morph) {
+  animation-duration: 550ms;
+  animation-timing-function: var(--ease-out-soft);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  35% {
+    filter: blur(4px);
+  }
+}
+::view-transition-old(.nav-forward) {
+  animation: 180ms var(--ease-out-soft) both vt-out-left;
+}
+::view-transition-new(.nav-forward) {
+  animation: 500ms var(--ease-out-soft) 80ms both vt-in-right;
+}
+::view-transition-old(.nav-back) {
+  animation: 180ms var(--ease-out-soft) both vt-out-right;
+}
+::view-transition-new(.nav-back) {
+  animation: 500ms var(--ease-out-soft) 80ms both vt-in-left;
+}
+@keyframes vt-out-left {
+  to {
+    opacity: 0;
+    transform: translateX(-24px);
+    filter: blur(4px);
+  }
+}
+@keyframes vt-out-right {
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+    filter: blur(4px);
+  }
+}
+@keyframes vt-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+    filter: blur(4px);
+  }
+}
+@keyframes vt-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+    filter: blur(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader {
+    display: none;
+  }
+  html.intro {
+    --intro: 0ms;
+  }
+  .rise,
+  .flow-line,
+  .scroll-cue,
+  .brand-ring,
+  .portrait,
+  .portrait-img,
+  .words-now .word > span {
+    animation: none;
+  }
+  .word > span,
+  .js [data-reveal],
+  .js [data-draw] {
+    transform: none;
+    opacity: 1;
+    transition: none;
+  }
+  .pointer-glow {
+    display: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
