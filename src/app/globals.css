@@ -166,6 +166,11 @@ html.theme-vt::view-transition-new(root) {
 .spotlight:hover::before {
   opacity: 1;
 }
+@media (hover: none) {
+  .spotlight.is-near::before {
+    opacity: 0.85;
+  }
+}
 
 /* Entrada del hero (CSS: visible aunque falle JS) */
 @keyframes rise {
@@ -244,6 +249,15 @@ html:not(.js) .word > span {
   transition: transform 1200ms var(--ease-in-out-soft);
 }
 .js [data-draw].is-visible {
+  transform: none;
+}
+
+.js [data-draw-y] {
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 600ms var(--ease-out-soft);
+}
+.js [data-draw-y].is-visible {
   transform: none;
 }
 
@@ -433,6 +447,7 @@ html.intro #hero-portrait .portrait-img {
   }
   .word > span,
   .js [data-reveal],
+  .js [data-draw-y],
   .js [data-draw] {
     transform: none;
     opacity: 1;

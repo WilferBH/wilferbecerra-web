@@ -22,9 +22,10 @@ function NodeGraph({ services }: { services: Dictionary["albor"]["services"] }) 
   return (
     <div className="relative">
       <DrawnConnectors />
-      <ol className="relative grid gap-4 lg:grid-rows-3 lg:gap-6">
+      <ol className="relative grid gap-7 lg:grid-rows-3 lg:gap-6">
         {services.map((s, i) => (
-          <li key={s.title} data-reveal style={{ "--i": i } as React.CSSProperties} className={`lg:w-[62%] ${i === 1 ? "lg:ml-auto" : ""}`}>
+          <li key={s.title} data-reveal style={{ "--i": i } as React.CSSProperties} className={`relative lg:w-[62%] ${i === 1 ? "lg:ml-auto" : ""}`}>
+            {i > 0 && <span data-draw-y aria-hidden className="absolute -top-7 left-10 h-7 w-px bg-accent-bright/60 lg:hidden" />}
             <Spotlight className="rounded-2xl border border-line bg-surface/80 backdrop-blur">
               <div className="flex gap-4 p-5">
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-accent/40 bg-accent/15 font-mono text-xs text-accent-bright">

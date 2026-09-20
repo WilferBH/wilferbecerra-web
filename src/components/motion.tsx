@@ -14,6 +14,19 @@ export function useReducedMotionSafe() {
   return useSyncExternalStore(subscribeRM, () => window.matchMedia(RM).matches, () => false);
 }
 
+/** Consulta de medios con valor inicial `false` para no romper la hidratación. */
+export function useMedia(query: string) {
+  const [match, setMatch] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const update = () => setMatch(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, [query]);
+  return match;
+}
+
 export function Spotlight({ children, className = "" }: { children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   return (

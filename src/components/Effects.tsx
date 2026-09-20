@@ -8,7 +8,9 @@ export function RevealObserver() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const els = document.querySelectorAll<HTMLElement>("[data-reveal]:not(.is-visible), [data-draw]:not(.is-visible), [data-words]:not(.is-visible)");
+    const els = document.querySelectorAll<HTMLElement>(
+      "[data-reveal]:not(.is-visible), [data-draw]:not(.is-visible), [data-draw-y]:not(.is-visible), [data-words]:not(.is-visible)",
+    );
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -21,7 +23,20 @@ export function RevealObserver() {
       { rootMargin: "0px 0px -10% 0px" },
     );
     els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+
+    // Sin ratón no hay hover: la tarjeta centrada en pantalla toma el brillo.
+    let near: IntersectionObserver | undefined;
+    if (window.matchMedia("(hover: none)").matches) {
+      near = new IntersectionObserver((entries) => entries.forEach((e) => e.target.classList.toggle("is-near", e.isIntersecting)), {
+        rootMargin: "-38% 0px -38% 0px",
+      });
+      document.querySelectorAll(".spotlight").forEach((el) => near!.observe(el));
+    }
+
+    return () => {
+      observer.disconnect();
+      near?.disconnect();
+    };
   }, [pathname]);
 
   return null;

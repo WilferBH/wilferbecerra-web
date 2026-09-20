@@ -90,7 +90,7 @@ export function Header({ lang, nav, a11y, brand }: Props) {
       >
         <Link href={home} aria-label={brand.home} transitionTypes={onHome ? undefined : ["nav-back"]} className="group flex items-center gap-3">
           <span className="relative size-10 shrink-0 rounded-full p-[2px] [background:conic-gradient(from_var(--brand-angle),var(--color-accent-bright),transparent_35%,var(--color-accent)_70%,var(--color-accent-bright))] brand-ring">
-            <span className="relative block size-full overflow-hidden rounded-full border-2 border-bg bg-surface">
+            <span id="brand-avatar" className="relative block size-full overflow-hidden rounded-full border-2 border-bg bg-surface">
               <Image src="/wilfer-becerra-avatar.webp" alt="" fill sizes="40px" className="object-cover object-[50%_20%] transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-110" />
             </span>
           </span>

@@ -10,7 +10,7 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { useReducedMotionSafe } from "./motion";
+import { useMedia, useReducedMotionSafe } from "./motion";
 
 const spring = { stiffness: 150, damping: 20, mass: 0.6 };
 
@@ -24,9 +24,11 @@ export function TiltPortrait({ children }: { children: ReactNode }) {
   const sheenY = useTransform(py, [0, 1], ["10%", "90%"]);
   const sheen = useMotionTemplate`radial-gradient(420px circle at ${sheenX} ${sheenY}, rgb(255 255 255 / 0.14), transparent 55%)`;
 
+  const coarse = useMedia("(pointer: coarse)");
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 900], [0, 110]);
   const scale = useTransform(scrollY, [0, 900], [1, 0.92]);
+  const tiltByScroll = useSpring(useTransform(scrollY, [0, 700], [5, -5]), spring);
 
   const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (reduced || e.pointerType !== "mouse") return;
@@ -44,7 +46,7 @@ export function TiltPortrait({ children }: { children: ReactNode }) {
       <motion.div
         onPointerMove={onMove}
         onPointerLeave={onLeave}
-        style={reduced ? undefined : { rotateX, rotateY, transformStyle: "preserve-3d" }}
+        style={reduced ? undefined : { rotateX: coarse ? tiltByScroll : rotateX, rotateY: coarse ? 0 : rotateY, transformStyle: "preserve-3d" }}
         className="group/tilt relative"
       >
         {children}
@@ -105,16 +107,25 @@ export function StackedCards({ children }: { children: ReactNode }) {
 }
 
 function StackItem({ i, n, p, children, static: isStatic }: { i: number; n: number; p: MotionValue<number>; children: ReactNode; static: boolean }) {
+  const ref = useRef<HTMLLIElement>(null);
+  const small = useMedia("(max-width: 1023px)");
   const start = i / n;
   const scale = useTransform(p, [start, 1], [1, 1 - (n - 1 - i) * 0.05]);
   const shade = useTransform(p, [start, 1], [0, (n - 1 - i) * 0.35]);
 
+  const { scrollYProgress: exit } = useScroll({ target: ref, offset: ["end 90%", "end 20%"] });
+  const exitScale = useTransform(exit, [0, 1], [1, 0.92]);
+  const exitShade = useTransform(exit, [0, 1], [0, 0.5]);
+
+  const mobile = small && !isStatic;
+  const style = isStatic ? undefined : mobile ? { scale: exitScale } : { scale };
+
   return (
-    <li className="lg:sticky" style={{ top: `calc(6.5rem + ${i * 1.25}rem)` }}>
-      <motion.div style={isStatic ? undefined : { scale }} className="relative origin-top">
+    <li ref={ref} className="lg:sticky" style={{ top: `calc(6.5rem + ${i * 1.25}rem)` }}>
+      <motion.div style={style} className="relative origin-top">
         {children}
         {!isStatic && (
-          <motion.div aria-hidden style={{ opacity: shade }} className="pointer-events-none absolute inset-0 rounded-3xl bg-black" />
+          <motion.div aria-hidden style={{ opacity: mobile ? exitShade : shade }} className="pointer-events-none absolute inset-0 rounded-3xl bg-black" />
         )}
       </motion.div>
     </li>

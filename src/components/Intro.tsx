@@ -36,7 +36,11 @@ export function Intro() {
       if (cancelled || !root.current || !photo.current) return;
 
       const from = photo.current.getBoundingClientRect();
-      const target = document.getElementById("hero-portrait")?.getBoundingClientRect();
+      const hero = document.getElementById("hero-portrait")?.getBoundingClientRect();
+      // En pantallas pequeñas el retrato queda bajo el pliegue: la foto aterriza en el avatar del menú.
+      const heroVisible = !!hero && hero.width > 0 && hero.top < window.innerHeight * 0.85;
+      const avatar = document.getElementById("brand-avatar")?.getBoundingClientRect();
+      const target = heroVisible ? hero : avatar && avatar.width > 0 ? avatar : undefined;
       const box = photo.current;
       Object.assign(box.style, {
         position: "fixed",
@@ -56,14 +60,19 @@ export function Intro() {
         fill: "forwards",
       });
 
-      const onScreen = target && target.top < window.innerHeight * 0.85 && target.width > 0;
-      const flight = onScreen
+      const flight = target
         ? box.animate(
             [
               { left: `${from.left}px`, top: `${from.top}px`, width: `${from.width}px`, height: `${from.height}px`, borderRadius: "20px" },
-              { left: `${target.left}px`, top: `${target.top}px`, width: `${target.width}px`, height: `${target.height}px`, borderRadius: "32px" },
+              {
+                left: `${target.left}px`,
+                top: `${target.top}px`,
+                width: `${target.width}px`,
+                height: `${target.height}px`,
+                borderRadius: heroVisible ? "32px" : "999px",
+              },
             ],
-            { duration: FLIGHT, easing: EASE, fill: "forwards" },
+            { duration: heroVisible ? FLIGHT : FLIGHT * 0.85, easing: EASE, fill: "forwards" },
           )
         : box.animate([{ opacity: 1 }, { opacity: 0, transform: "scale(0.92)", filter: "blur(6px)" }], { duration: 500, easing: EASE, fill: "forwards" });
 
